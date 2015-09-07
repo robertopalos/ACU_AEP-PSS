@@ -1,3 +1,33 @@
+/*============================================================================*/
+/*                        SV C CE SOFTWARE GROUP                              */
+/*============================================================================*/
+/*                        OBJECT SPECIFICATION                                */
+/*============================================================================*
+* C Source:         %template.c%
+* Instance:         RPL_1
+* %version:         2 %
+* %created_by:      uid02495 %
+* %date_created:    Fri Jan  9 14:38:03 2004 %
+*=============================================================================*/
+/* DESCRIPTION : C source template file                                       */
+/*============================================================================*/
+/* FUNCTION COMMENT : This file describes the C source template according to  */
+/* the new software platform                                                  */
+/*                                                                            */
+/*============================================================================*/
+/*                               OBJECT HISTORY                               */
+/*============================================================================*/
+/*  REVISION |   DATE      |                               |      AUTHOR      */
+/*----------------------------------------------------------------------------*/
+/*  1.0      | 03/05/2013  |                               | Abraham Tezmol   */
+/*	Periodic Interrupt Timer initialization and low-level functions and		  */
+/*	prototypes.																  */
+/*----------------------------------------------------------------------------*/
+/*  1.1      | 07/09/2015  |                               | Roberto Palos    */
+/*	Update PIT_CHANNEL_TARGET_FREQUENCY to match with a mask of 256 equals to */
+/*	1 second. And template format for AEP.									  */
+/*============================================================================*/
+
 /****************************************************************************************************/
 /**
 \file       PIT.h
@@ -40,7 +70,7 @@ extern tCallbackFunction PIT_Callback[8];
 #define    PIT_CHANNEL_0					0
 
 #define    PIT_DEVICE_FREQUENCY           (uint32_t)64000000
-#define    PIT_CHANNEL_TARGET_FREQUENCY   (uint32_t)1280
+#define    PIT_CHANNEL_TARGET_FREQUENCY   (uint32_t)256
 
 /** Periodic Interrupt Timer macros */
 #define    PIT_CHANNEL_VALUE            	( ( PIT_DEVICE_FREQUENCY / PIT_CHANNEL_TARGET_FREQUENCY ) - 1 )
