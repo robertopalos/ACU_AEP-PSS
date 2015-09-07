@@ -8,13 +8,22 @@
 */
 /*******************************************************************************/
 
+/*******************************************************************************/
+/**
+\file       MemAlloc_Cfg.c
+\brief      types and names changed to match with the typedefs
+\author     Roberto Palos
+\version    1.1
+\date       07/09/2015
+*/
+/*******************************************************************************/
 #include "MemAlloc_Cfg.h"
 
-extern const u32 _heap_start_addr;
-extern const u32 _heap_end_addr;
+extern const T_ULONG _heap_addr;
+extern const T_ULONG _heap_end;
 
 const MemAllocConfigType MemAllocConfig = 
 {
-	(void*)&_heap_start_addr,
-	(void*)&_heap_end_addr	
+	(void*)&_heap_addr,
+	(void*)&_heap_end	
 };
