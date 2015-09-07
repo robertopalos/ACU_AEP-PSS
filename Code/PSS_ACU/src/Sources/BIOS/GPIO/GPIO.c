@@ -1,12 +1,30 @@
-/*******************************************************************************/
-/**
-\file       GPIO.c
-\brief      General purpose IO functions
-\author     Abraham Tezmol
-\version    1.0
-\date       31/10/2008
-*/
-/****************************************************************************************************/
+/*============================================================================*/
+/*                        SV C CE SOFTWARE GROUP                              */
+/*============================================================================*/
+/*                        OBJECT SPECIFICATION                                */
+/*============================================================================*
+* C Source:         %GPIO.c%
+* Instance:         ACU_PSS
+* %version:         1 %
+* %created_by:       %
+* %date_created:    %
+*=============================================================================*/
+/* DESCRIPTION :  GPIO source code driver                                     */
+/*============================================================================*/
+/* FUNCTION COMMENT : 	GPIO source code to start Push buttons, leds.         */
+/*                       Initialize port as input or output.                  */
+/*============================================================================*/
+/*                               OBJECT HISTORY                               */
+/*============================================================================*/
+/*  REVISION |   DATE      |                               |      AUTHOR      */
+/*----------------------------------------------------------------------------*/
+/*  1.0      | 31/10/2008  |                               | Abraham Tezmol   */
+/* Integration under Continuus CM                                             */
+/*----------------------------------------------------------------------------*/
+/*  1.1      | 07/09/2015  |                               | Roberto Palos    */
+/* Changed template                                                           */
+/*============================================================================*/
+
 
 /*****************************************************************************************************
 * Include files
@@ -167,4 +185,13 @@ void vfnGPIO_LED_Init(void)
 	
 }
 
+void PUSH_Init(void)
+{
+	
+	vfnGPIO_Init_channel(PUSH1,GPIO_INPUT,GPIO_OPEN_DRAIN_ENABLE);  /* PE4 --> PUSH1*/
+	vfnGPIO_Init_channel(PUSH2,GPIO_INPUT,GPIO_OPEN_DRAIN_ENABLE);  /* PE5 --> PUSH2*/
+	vfnGPIO_Init_channel(PUSH3,GPIO_INPUT,GPIO_OPEN_DRAIN_ENABLE);  /* PE6 --> PUSH3*/
+	vfnGPIO_Init_channel(PUSH4,GPIO_INPUT,GPIO_OPEN_DRAIN_ENABLE);  /* PE7 --> PUSH4*/
+	
+}
 /****************************************************************************************************/
