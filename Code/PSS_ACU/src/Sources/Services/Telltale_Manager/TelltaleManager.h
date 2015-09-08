@@ -21,6 +21,9 @@
 /*----------------------------------------------------------------------------*/
 /*  1.0      | 31/08/2015  | 					           | Alexis Garcia    */
 /* Creation of the module 		                                              */
+/*----------------------------------------------------------------------------*/
+/*  1.1      | 08/09/2015  | 					           | Roberto Palos    */
+/* Rename of prototypes to match with the source code.                          */
 /*============================================================================*/
 
 #ifndef TELLTALEMAN_H                               /* To avoid double inclusion */
@@ -28,8 +31,7 @@
 
 /* Includes */
 /* -------- */
-
-
+#include "typedefs.h"
 /* Exported types and constants */
 /* ---------------------------- */
 
@@ -77,10 +79,11 @@
 /* ---------------------------------------- */
 
 /* Functions prototypes */
-extern TM_TelltaleMsgDriver (void);
-extern TM_TelltaleMsgPass (void);
-extern TM_AirbagPass (void);
-extern TM_TelltaleMsgOff (void);
+extern void TM_TelltaleMsgDriver(T_UBYTE lub_Indication, T_UBYTE lub_Duty, T_UBYTE lub_Period);
+extern void TM_TelltaleMsgPass(T_UBYTE lub_Indication, T_UBYTE lub_Duty, T_UBYTE lub_Period);
+extern void TM_AirbagPass (void);
+extern void TM_TelltaleMsgDriverEu (void);
+extern void TM_TelltaleMsgOff (void);
 
 /* Functions macros */
 
