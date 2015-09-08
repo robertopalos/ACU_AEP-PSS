@@ -1,5 +1,5 @@
 /*============================================================================*/
-/*                        SV C CE SOFTWARE GROUP                              */
+/*                        SV C BC SOFTWARE GROUP                              */
 /*============================================================================*/
 /*                        OBJECT SPECIFICATION                                */
 /*============================================================================*
@@ -21,6 +21,9 @@
 /*----------------------------------------------------------------------------*/
 /*  1.0      | 31/08/15  |                               | Alexis Garcia      */
 /* Creation of the module, first version                                      */
+/*----------------------------------------------------------------------------*/
+/*  1.1      | 08/09/15  |                               | Alexis Garcia      */
+/* Renamed enumeration to implement en DriverReminder.c   Roberto Palos       */
 /*============================================================================*/
 
 #ifndef DRIVERREM_H                               /* To avoid double inclusion */
@@ -42,7 +45,10 @@
 /*==================================================*/ 
 /* BYTE constants */
 extern T_UBYTE rub_TimerD;
-extern T_UBYTE rub_Speed;
+extern T_UWORD rub_Speed;
+extern T_UBYTE rub_EngineStatus;
+extern T_UWORD rub_Distance;
+extern T_UBYTE rub_DoorStatus;
 
 /* WORD constants */
 
@@ -63,16 +69,16 @@ extern T_UBYTE rub_Speed;
 /* LONGS and STRUCTURES */
 typedef enum
 {
-	ENHANCED_1 = 0,
-	ENHANCED_2, 
-	ENHANCED_3 
+	ENHANCED_1D = 0,
+	ENHANCED_2D, 
+	ENHANCED_3D 
 }E_DRStateListTypeEn;
 
 typedef enum
 {
-	EURO_1 = 0,
-	EURO_2, 
-	EURO_3 
+	EURO_1D = 0,
+	EURO_2D, 
+	EURO_3D 
 }E_DRStateListTypeEu;
 
 /*======================================================*/ 
@@ -84,8 +90,8 @@ typedef enum
 
 /* Functions prototypes */
 extern void DR_BasicRem (void);
-extern DR_StateMachineEn (void);
-extern DR_StateMachineEu (void);
+extern void DR_StateMachineEn (void);
+extern void DR_StateMachineEu (void);
 /* Functions macros */
 
 
