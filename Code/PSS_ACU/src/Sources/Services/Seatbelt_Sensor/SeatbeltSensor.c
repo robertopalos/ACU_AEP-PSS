@@ -21,11 +21,16 @@
 /*----------------------------------------------------------------------------*/
 /*  1.0      | 29/08/2015  |                               | Alexis Garcia    */
 /* Creation of the module                                             		  */
+/*----------------------------------------------------------------------------*/
+/*  1.1      | 08/09/2015  |                               | Alexis Garcia    */
+/* Modification of functionality                             Roberto Palos    */
 /*============================================================================*/
 
 /* Includes */
 /* -------- */
 #include "SeatbeltSensor.h"
+#include "GPIO.h"
+#include "ADC.h"
 
 /* Functions macros, constants, types and datas         */
 /* ---------------------------------------------------- */
@@ -61,8 +66,8 @@ static T_UBYTE rub_UndeterminedDriver = 0;
 
 
 /* LONG and STRUCTURE RAM variables */
-static E_SeatbeltStatusType re_SeatbeltStatusPass = UNBUCKLED;
-static E_SeatbeltStatusType re_SeatbeltStatusDriver = UNBUCKLED;
+static E_SeatbeltStatusType re_SeatbeltStatusPass = FASTEN;
+static E_SeatbeltStatusType re_SeatbeltStatusDriver = FASTEN;
 
 /*======================================================*/ 
 /* close variable declaration sections                  */
@@ -73,7 +78,8 @@ static E_SeatbeltStatusType re_SeatbeltStatusDriver = UNBUCKLED;
 
 /* Private functions prototypes */
 /* ---------------------------- */
-
+ void SBS_ResetCountersPass (void);
+ void SBS_ResetCountersDriver (void);
 
 
 /* Exported functions prototypes */
@@ -84,142 +90,14 @@ static E_SeatbeltStatusType re_SeatbeltStatusDriver = UNBUCKLED;
 /* Private functions */
 /* ----------------- */
 /**************************************************************
- *  Name                 : private_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
- **************************************************************/
-
-void STS_StateMachineDriver(void)
-{
-	
-	switch(re_SeatbeltStatusDriver)
-	{
-		
-		case UNBUCKLED:
-			if(rub_BuckledDriver == VALID_BUCKLED)
-			{
-				SBS_ResetCounterDriver();
-				re_SeatbeltStatusDriver = BUCKLED;
-			}
-			else if(rub_UndeterminedDriver == VALID_UNDETERMINED)
-			{
-				SBS_ResetCounterDriver();
-				re_SeatbeltStatusDriver = UNDERTERMINED;
-			}
-			else{ /*do nothing*/ }
-		break;
-		
-		case BUCKLED:
-			if(rub_UnbuckledDriver == VALID_UNBUCKLED)
-			{
-				SBS_ResetCounterDriver();
-				re_SeatbeltStatusDriver = UNBUCKLED;
-			}
-			else if(rub_UndeterminedDriver == VALID_UNDETERMINED)
-			{
-				SBS_ResetCounterDriver();
-				re_SeatbeltStatusDriver = UNDERTERMINED;
-			}
-			else{ /*do nothing*/ }
-		break;
-		
-		case UNDETERMINED:
-			if(rub_BuckledDriver == VALID_BUCKLED)
-			{
-				SBS_ResetCounterDriver();
-				re_SeatbeltStatusDriver = BUCKLED;
-			}
-			else if(rub_UnbuckledDriver == VALID_UNBUCKLED)
-			{
-				SBS_ResetCounterDriver();
-				re_SeatbeltStatusDriver = UNBUCKLED;
-			}
-			else{ /*do nothing*/ }
-		break;
-		
-		default:
-			/*error message */
-		break;
-	
-	}
-}
-
-/**************************************************************
- *  Name                 : private_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
- **************************************************************/
-
-void STS_StateMachinePass(void)
-{
-	
-	switch(re_SeatbeltStatusPass)
-	{
-		
-		case UNBUCKLED:
-			if(rub_BuckledPass >= VALID_BUCKLED)
-			{
-				SBS_ResetCounterPass();
-				re_SeatbeltStatusPass = BUCKLED;
-			}
-			else if(rub_UndeterminedPass >= VALID_UNDETERMINED)
-			{
-				SBS_ResetCounterPass();
-				re_SeatbeltStatusPass = UNDERTERMINED;
-			}
-			else{ /*do nothing*/ }
-		break;
-		
-		case BUCKLED:
-			if(rub_UnbuckledPass >= VALID_UNBUCKLED)
-			{
-				SBS_ResetCounterPass();
-				re_SeatbeltStatusPass = UNBUCKLED;
-			}
-			else if(rub_UndeterminedPass >= VALID_UNDETERMINED)
-			{
-				SBS_ResetCounterPass();
-				re_SeatbeltStatusPass = UNDERTERMINED;
-			}
-			else{ /*do nothing*/ }
-		break;
-		
-		case UNDETERMINED:
-			if(rub_BuckledPass >= VALID_BUCKLED)
-			{
-				SBS_ResetCounterPass();
-				re_SeatbeltStatusPass = BUCKLED;
-			}
-			else if(rub_UnbuckledPass >= VALID_UNBUCKLED)
-			{
-				SBS_ResetCounterPass();
-				re_SeatbeltStatusPass = UNBUCKLED;
-			}
-			else{ /*do nothing*/ }
-		break;
-		
-		default:
-			/*error message */
-		break;
-	
-	}
-}
-
-
-
-/**************************************************************
- *  Name                 : private_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
+ *  Name                 : SBS_ResetCountersDriver
+ *  Description          :	resets to 0 the counters for the state determination of driver
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :   
  **************************************************************/
  
- void SBS_ResetCounterDriver(void)
+ void SBS_ResetCountersDriver (void)
  {
  	rub_BuckledDriver = 0;
 	rub_UnbuckledDriver = 0;
@@ -227,17 +105,17 @@ void STS_StateMachinePass(void)
  }
  
  /**************************************************************
- *  Name                 : private_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
+ *  Name                 : SBS_ResetCountersPass
+ *  Description          :	resets to 0 the counters for the state determination of passenger
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :   
  **************************************************************/
- void SBS_ResetCountersPass(void)
+ void SBS_ResetCountersPass (void)
  {
- 	rub_BuckledDriver = 0;
-	rub_UnbuckledDriver = 0;
-	rub_UndeterminedDriver = 0;
+ 	rub_BuckledPass = 0;
+	rub_UnbuckledPass = 0;
+	rub_UndeterminedPass = 0;
  }
 
 
@@ -245,93 +123,223 @@ void STS_StateMachinePass(void)
 /* Exported functions */
 /* ------------------ */
 /**************************************************************
- *  Name                 :	export_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
+ *  Name                 : SBS_StateMachineDriver
+ *  Description          :	controls the state of the seatbelt of driver
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :    
  **************************************************************/
-void STS_ReadVoltLevelDriver(void)
+
+void SBS_StateMachineDriver(void)
 {
-	T_UBYTE lub_VoltValue;	
 	
-	/*This is where the function gets voltage from ADC and converts into a integer number*/
+	switch(re_SeatbeltStatusDriver)
+	{
+		
+		case UNFASTEN:
+			if(rub_BuckledDriver == VALID_BUCKLED)
+			{
+				SBS_ResetCountersDriver();
+				re_SeatbeltStatusDriver = FASTEN;
+			}
+			else if(rub_UndeterminedDriver == VALID_UNDETERMINED)
+			{
+				SBS_ResetCountersDriver();
+				re_SeatbeltStatusDriver = UNKNOWN;
+			}
+			else{ /*do nothing*/ }
+		break;
+		
+		case FASTEN:
+			if(rub_UnbuckledDriver == VALID_UNBUCKLED)
+			{
+				SBS_ResetCountersDriver();
+				re_SeatbeltStatusDriver = UNFASTEN;
+			}
+			else if(rub_UndeterminedDriver == VALID_UNDETERMINED)
+			{
+				SBS_ResetCountersDriver();
+				re_SeatbeltStatusDriver = UNKNOWN;
+			}
+			else{ /*do nothing*/ }
+		break;
+		
+		case UNKNOWN:
+			if(rub_BuckledDriver == VALID_BUCKLED)
+			{
+				SBS_ResetCountersDriver();
+				re_SeatbeltStatusDriver = FASTEN;
+			}
+			else if(rub_UnbuckledDriver == VALID_UNBUCKLED)
+			{
+				SBS_ResetCountersDriver();
+				re_SeatbeltStatusDriver = UNFASTEN;
+			}
+			else{ /*do nothing*/ }
+		break;
+		
+		default:
+			re_SeatbeltStatusDriver = UNKNOWN;
+		break;
 	
-	
-	if((lub_VoltValue >= 12) && (lub_VoltValue <= 20) )
-	{
-		rub_UnbuckledDriver++;  
-	}
-	else if((lub_VoltValue >= 2) && (lub_VoltValue <= 10) )
-	{
-		rub_BuckledDriver++;
-	}
-	else if((lub_VoltValue > 10) && (lub_VoltValue < 12) )
-	{
-		rub_UndeterminedDriver++;
-	}
-	else
-	{
-		/*do nothing*/	
 	}
 }
 
 /**************************************************************
- *  Name                 :	export_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
+ *  Name                 : SBS_StateMachinePass
+ *  Description          :	controls the state of the seatbelt of passenger
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :    
  **************************************************************/
-void STS_ReadVoltLevelPass(void)
+
+void SBS_StateMachinePass(void)
 {
-	T_UBYTE lub_VoltValue;	
 	
-	/*This is where the function gets voltage from ADC and converts into a integer number*/
-	
-	
-	if((lub_VoltValue >= 12) && (lub_VoltValue <= 20) )
+	switch(re_SeatbeltStatusPass)
 	{
-		rub_UnbuckledPass++;  
+		
+		case UNFASTEN:
+			if(rub_BuckledPass >= VALID_BUCKLED)
+			{
+				SBS_ResetCountersPass();
+				re_SeatbeltStatusPass = FASTEN;
+			}
+			else if(rub_UndeterminedPass >= VALID_UNDETERMINED)
+			{
+				SBS_ResetCountersPass();
+				re_SeatbeltStatusPass = UNKNOWN;
+			}
+			else{ /*do nothing*/ }
+		break;
+		
+		case FASTEN:
+			if(rub_UnbuckledPass >= VALID_UNBUCKLED)
+			{
+				SBS_ResetCountersPass();
+				re_SeatbeltStatusPass = UNFASTEN;
+			}
+			else if(rub_UndeterminedPass >= VALID_UNDETERMINED)
+			{
+				SBS_ResetCountersPass();
+				re_SeatbeltStatusPass = UNKNOWN;
+			}
+			else{ /*do nothing*/ }
+		break;
+		
+		case UNKNOWN:
+			SBS_ResetCountersPass();
+			re_SeatbeltStatusPass = FASTEN;
+		break;
+		default:
+			re_SeatbeltStatusPass = FASTEN;
+		break;
+	
 	}
-	else if((lub_VoltValue >= 2) && (lub_VoltValue <= 10) )
+}
+
+/**************************************************************
+ *  Name                 :	SBS_ReadVoltLevelDriver
+ *  Description          :	reads the adc to change the states of driver sm
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :   
+ **************************************************************/
+void SBS_ReadVoltLevelDriver(void)
+{
+	T_ULONG lub_VoltValue = 0;	
+	lub_VoltValue = ADC_ReadPad(0) * 4;
+	if((lub_VoltValue >= 12000) && (lub_VoltValue <= 20000) )
 	{
-		rub_BuckledPass++;
+		rub_UnbuckledDriver++;
+		rub_BuckledDriver = 0;
+		rub_UndeterminedDriver = 0;  
 	}
-	else if((lub_VoltValue > 10) && (lub_VoltValue < 12) )
+	else if((lub_VoltValue >= 2000) && (lub_VoltValue <= 10000) )
 	{
-		rub_UndeterminedPass++;
+		rub_BuckledDriver++;
+		rub_UnbuckledDriver = 0;
+		rub_UndeterminedDriver = 0;
+	}
+	else if((lub_VoltValue > 10000) && (lub_VoltValue < 12000) )
+	{
+		rub_UndeterminedDriver++;
+		rub_BuckledDriver = 0;
+		rub_UnbuckledDriver = 0;
+	}
+	else if((lub_VoltValue >= 0) && (lub_VoltValue < 2000) )
+	{
+		rub_UndeterminedDriver++;
+		rub_BuckledDriver = 0;
+		rub_UnbuckledDriver = 0;
 	}
 	else
+	{/*do nothing*/}
+}
+
+/**************************************************************
+ *  Name                 :	SBS_ReadVoltLevelPass
+ *  Description          :	reads the adc to change the states of passenger sm
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :   
+ **************************************************************/
+void SBS_ReadVoltLevelPass(void)
+{
+	T_ULONG lub_VoltValuePass;	
+	lub_VoltValuePass = ADC_ReadPad(1) * 4;
+	if((lub_VoltValuePass >= 12000) && (lub_VoltValuePass <= 20000) )
 	{
-		/*do nothing*/	
+		rub_UnbuckledPass++;  
+		rub_BuckledPass = 0;
+		rub_UndeterminedPass = 0;
 	}
+	else if((lub_VoltValuePass >= 2000) && (lub_VoltValuePass <= 10000) )
+	{
+		rub_BuckledPass++;
+		rub_UnbuckledPass = 0;
+		rub_UndeterminedPass = 0;
+	}
+	else if((lub_VoltValuePass > 10000) && (lub_VoltValuePass < 12000) )
+	{
+		rub_UndeterminedPass++;
+		rub_BuckledPass = 0;
+		rub_UnbuckledPass = 0;
+	}
+	else if((lub_VoltValuePass >= 0) && (lub_VoltValuePass < 2000) )
+	{
+		rub_UndeterminedPass++;
+		rub_BuckledPass = 0;
+		rub_UnbuckledPass = 0;	
+	}
+	else
+	{/*do nothing*/}
 }
 
 /* ------------------ */
 /**************************************************************
- *  Name                 :	export_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
+ *  Name                 :	SBS_GetSeatbeltStatusDriver
+ *  Description          :	retunrs the actul state of the seatbelt SM for driver
+ *  Parameters           : 	void
+ *  Return               :	void
+ *  Critical/explanation :   
  **************************************************************/
- T_UBYTE STS_GetSeatbeltStatusDriver(void)
+ T_UBYTE SBS_GetSeatbeltStatusDriver(void)
  {
- 	return (T_UBYTE) re_SeatbeltStatusDriver;
+ 	return  re_SeatbeltStatusDriver;
  }
  
  
- /**************************************************************
- *  Name                 :	export_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
+/**************************************************************
+ *  Name                 :	SBS_GetSeatbeltStatusPass
+ *  Description          :	retunrs the actul state of the seatbelt SM for passenger
+ *  Parameters           : 	void
+ *  Return               :	void
+ *  Critical/explanation :   
  **************************************************************/
  T_UBYTE SBS_GetSeatbeltStatusPass(void)
  {
- 	return (T_UBYTE) re_SeatbeltStatusPass;
+ 	return re_SeatbeltStatusPass;
  }
  
  

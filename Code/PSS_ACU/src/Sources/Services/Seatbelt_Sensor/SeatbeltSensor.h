@@ -21,6 +21,9 @@
 /*----------------------------------------------------------------------------*/
 /*  1.0      | 29/08/2015 | 			              | Alexis Garcia		  */
 /* Creation of the header file, fisrt version                                 */
+/*----------------------------------------------------------------------------*/
+/*  1.1      | 29/08/2015 | 			              | Alexis Garcia		  */
+/* Added function protypes to header. 		                                  */
 /*============================================================================*/
 
 #ifndef SEATBELTSENSOR_H                               /* To avoid double inclusion */
@@ -67,9 +70,9 @@
 /* LONGS and STRUCTURES */
 typedef enum
 {
-	UNBUCKLED = 0,
-	BUCKLED,
-	UNDETERMINED
+	UNFASTEN,
+	FASTEN,
+	UNKNOWN
 }E_SeatbeltStatusType;
 
 /*======================================================*/ 
@@ -80,6 +83,8 @@ typedef enum
 /* ---------------------------------------- */
 
 /* Functions prototypes */
+extern void SBS_StateMachineDriver(void);
+extern void SBS_StateMachinePass(void);
 extern T_UBYTE SBS_GetSeatbeltStatusDriver(void);
 extern T_UBYTE SBS_GetSeatbeltStatusPass(void);
 extern void SBS_ReadVoltLevelDriver(void);
@@ -92,4 +97,3 @@ extern void SBS_ReadVoltLevelPass(void);
 
 
 #endif
-
