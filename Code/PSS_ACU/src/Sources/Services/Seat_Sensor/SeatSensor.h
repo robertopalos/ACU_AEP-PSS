@@ -21,6 +21,9 @@
 /*----------------------------------------------------------------------------*/
 /*  1.0      | 29/08/2015 | 			              | Alexis Garcia		  */
 /* Creation of the header file, fisrt version                                 */
+/*----------------------------------------------------------------------------*/
+/*  1.1      | 08/09/2015 | 			              | Roberto Palos		  */
+/* Uppdate enumartion names and functions protipes.                           */
 /*============================================================================*/
 
 #ifndef SEATSENSOR_H                               /* To avoid double inclusion */

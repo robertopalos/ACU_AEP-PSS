@@ -22,6 +22,10 @@
 /*  1.0      | 29/08/2015  |                               | Alexis Garcia    */
 /* Creation of the module                                             		  */
 /*============================================================================*/
+/*----------------------------------------------------------------------------*/
+/*  1.1      | 08/09/2015  |                               | Alexis Garcia    */
+/* Modification of functionality                             Roberto Palos    */
+/*============================================================================*/
 
 /* Includes */
 /* -------- */
@@ -57,7 +61,7 @@ static T_UBYTE rub_Undetermined = 0;
 
 
 /* LONG and STRUCTURE RAM variables */
-static E_SeatStatusType re_SeatStatus = UNOCCUPIED;
+static E_SeatStatusType re_SeatStatus = NO_OCUPANCY;
 
 /*======================================================*/ 
 /* close variable declaration sections                  */
@@ -68,7 +72,7 @@ static E_SeatStatusType re_SeatStatus = UNOCCUPIED;
 
 /* Private functions prototypes */
 /* ---------------------------- */
-
+void STS_ResetCounters();
 
 
 /* Exported functions prototypes */
@@ -79,131 +83,124 @@ static E_SeatStatusType re_SeatStatus = UNOCCUPIED;
 /* Private functions */
 /* ----------------- */
 /**************************************************************
- *  Name                 : private_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
+ *  Name                 : STS_ResetCounters
+ *  Description          :	reset the counters of the state of the seat
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :    
+ **************************************************************/
+ 
+void STS_ResetCounters(){
+	rub_Occupied = 0;
+	rub_Unoccupied = 0;
+	rub_Undetermined = 0;
+}
+
+
+
+/* Exported functions */
+/* ------------------ */
+/**************************************************************
+ *  Name                 : STS_StateMachine
+ *  Description          :	state machine for the seat sensor control
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :    
  **************************************************************/
 
-void STS_StateMachine(void)
-{
-	
-	switch(re_SeatStatus)
-	{
-		
-		case UNOCCUPIED:
-			if(rub_Occupied >= VALID_OCCUPIED)
-			{
-				SBS_ResetCounters();
-				re_SeatStatus = OCCUPIED;
+void STS_StateMachine(void){
+	switch(re_SeatStatus){
+		case NO_OCUPANCY:
+			if(rub_Occupied >= VALID_SIGNAL_OC){
+				STS_ResetCounters();
+				re_SeatStatus = OCUPANCY;
 			}
-			else if(rub_Undetermined >= VALID_UNDETERMINED)
-			{
-				SBS_ResetCounters();
-				re_SeatStatus = UNDERTERMINED;
+			else if(rub_Undetermined >= VALID_SIGNAL_UNK){
+				STS_ResetCounters();
+				re_SeatStatus = UNKNOWN2;
 			}
 			else{ /*do nothing*/ }
 		break;
 		
-		case OCCUPIED:
-			if(rub_Unoccupied >= VALID_UNOCCUPIED)
-			{
-				SBS_ResetCounters();
-				re_SeatStatus = UNOCUPPIED;
+		case OCUPANCY:
+			if(rub_Unoccupied >= VALID_SIGNAL_UNOC){
+				STS_ResetCounters();
+				re_SeatStatus = NO_OCUPANCY;
 			}
-			else if(rub_Undetermined >= VALID_UNDETERMINED)
-			{
-				SBS_ResetCounters();
-				re_SeatStatus = UNDERTERMINED;
+			else if(rub_Undetermined >= VALID_SIGNAL_UNK){
+				STS_ResetCounters();
+				re_SeatStatus = UNKNOWN2;
 			}
 			else{ /*do nothing*/ }
 		break;
 		
-		case UNDETERMINED:
-			if(rub_Occupied >= VALID_OCCUPIED)
-			{
-				SBS_ResetCounters();
-				re_SeatStatus = OCCUPIED;
+		case UNKNOWN2:
+			if(rub_Occupied >= VALID_SIGNAL_OC){
+				STS_ResetCounters();
+				re_SeatStatus = OCUPANCY;
 			}
-			else if(rub_Unoccupied >= VALID_UNOCCUPIED)
-			{
-				SBS_ResetCounters();
-				re_SeatStatus = UNOCUPPIED;
+			else if(rub_Unoccupied >= VALID_SIGNAL_UNOC){
+				STS_ResetCounters();
+				re_SeatStatus = NO_OCUPANCY;
 			}
 			else{ /*do nothing*/ }
 		break;
 		
 		default:
-			/*error message */
+			re_SeatStatus = UNKNOWN2;
 		break;
 	
 	}
 }
 
 /**************************************************************
- *  Name                 : private_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
+ *  Name                 :	STS_ReadVoltLevel
+ *  Description          :	read the volt of adc to detemine the counters for the SM 
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :    
  **************************************************************/
- 
- void SBS_ResetCounters(void)
- {
- 	rub_Occupied = 0;
-	rub_Unoccupied = 0;
-	rub_Undetermined = 0;
- }
-
-
-
-/* Exported functions */
-/* ------------------ */
-/**************************************************************
- *  Name                 :	export_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
- **************************************************************/
-void STS_ReadVoltLevel(void)
-{
-	T_UBYTE lub_VoltValue;	
+void STS_ReadVoltLevel(void){
+	T_ULONG lub_SeatVoltValue;	
 	
 	/*This is where the function gets voltage from ADC and converts into a integer number*/
 	
-	
-	if((lub_VoltValue >= 12) && (lub_VoltValue <= 20) )
-	{
+	lub_SeatVoltValue = (T_ULONG) ADC_ReadPad(2) * 4;
+	if((lub_SeatVoltValue >= 12000) && (lub_SeatVoltValue <= 20000) ){
 		rub_Unoccupied++;  
+		rub_Occupied = 0;
+		rub_Undetermined = 0;
 	}
-	else if((lub_VoltValue >= 2) && (lub_VoltValue <= 10) )
-	{
+	else if((lub_SeatVoltValue >= 2000) && (lub_SeatVoltValue <= 10000) ){
 		rub_Occupied++;
+		rub_Unoccupied = 0;
+		rub_Undetermined = 0;
 	}
-	else if((lub_VoltValue > 10) && (lub_VoltValue < 12) )
-	{
+	else if((lub_SeatVoltValue > 10000) && (lub_SeatVoltValue < 12000) ){
 		rub_Undetermined++;
+		rub_Occupied = 0;
+		rub_Unoccupied = 0;
+	}
+	else if((lub_SeatVoltValue >= 0) && (lub_SeatVoltValue < 2000) ){
+		rub_Undetermined++;
+		rub_Occupied = 0;
+		rub_Unoccupied = 0;	
 	}
 	else
-	{
-		/*do nothing*/	
-	}
+	{/*do nothing*/	}
 }
 
 
 /* Exported functions */
 /* ------------------ */
 /**************************************************************
- *  Name                 :	export_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
+ *  Name                 :	STS_GetSeatStatus
+ *  Description          :	retunrns the actual state of the machine for other modules
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :    
  **************************************************************/
- T_UBYTE STS_GetSeatStatus(void)
- {
- 	return (T_UBYTE) re_SeatStatus;
- }
+T_UBYTE STS_GetSeatStatus(void){
+ 	return re_SeatStatus;
+}
  
