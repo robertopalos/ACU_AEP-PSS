@@ -24,6 +24,9 @@
 /*----------------------------------------------------------------------------*/
 /*  1.1      | 08/09/2015 | 			              | Roberto Palos		  */
 /* Uppdate enumartion names and functions protipes.                           */
+/*----------------------------------------------------------------------------*/
+/*  1.2      | 08/09/2015 | 			              | Roberto Palos		  */
+/* Changed definition names.					                              */
 /*============================================================================*/
 
 #ifndef SEATSENSOR_H                               /* To avoid double inclusion */
@@ -38,9 +41,9 @@
 
 /* Types definition */
 
-#define 	VALID_OCCUPIED		6
-#define  	VALID_UNOCUPPIED	6
-#define		VALID_UNDETERMINED	6
+#define 	VALID_SIGNAL_OC		6
+#define  	VALID_SIGNAL_UNOC	6
+#define		VALID_SIGNAL_UNK	6
 
 /* typedef */
 
@@ -68,11 +71,13 @@
 
 
 /* LONGS and STRUCTURES */
+
+
 typedef enum
 {
-	UNOCCUPIED = 0,
-	OCCUPIED,
-	UNDETERMINED
+	NO_OCUPANCY = 0,
+	OCUPANCY,
+	UNKNOWN2
 }E_SeatStatusType;
 
 /*======================================================*/ 
@@ -83,6 +88,7 @@ typedef enum
 /* ---------------------------------------- */
 
 /* Functions prototypes */
+extern void STS_StateMachine();
 extern T_UBYTE STS_GetSeatStatus(void);
 extern void STS_ReadVoltLevel(void);
 

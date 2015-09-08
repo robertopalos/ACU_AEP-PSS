@@ -21,6 +21,9 @@
 /*----------------------------------------------------------------------------*/
 /*  1.0      | 31/08/15    |                | Alexis Garcia					  */
 /* Creation of the module file, first version                                 */
+/*----------------------------------------------------------------------------*/
+/*  1.1      | 08/09/15    |                | Alexis Garcia					  */
+/* Update enum and names.					                                  */
 /*============================================================================*/
 
 #ifndef ACU_H                               /* To avoid double inclusion */
@@ -49,13 +52,17 @@
 /* Declaration of exported constants                */
 /*==================================================*/ 
 /* BYTE constants */
-
+extern T_UBYTE rub_ModeConfig;
 
 /* WORD constants */
 
 
 /* LONG and STRUCTURE constants */
-
+enum{
+	Basic_Mode = 0,
+	Enhanced_Mode,
+	Euro_Mode
+};
 
 
 /*======================================================*/ 
