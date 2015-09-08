@@ -21,11 +21,15 @@
 /*----------------------------------------------------------------------------*/
 /*  1.0      | 31/08/15  |                               | Alexis Garcia      */
 /* Creation of the module, first version                                      */
+/*----------------------------------------------------------------------------*/
+/*  1.0      | 08/09/15  |                               | Roberto Palos      */
+/* Added functions to receive paramenters and send messages.                  */
 /*============================================================================*/
 
 /* Includes */
 /* -------- */
 #include "ChimeManager.h"
+#include "Can_Manager.h"
 
 /* Functions macros, constants, types and datas         */
 /* ---------------------------------------------------- */
@@ -92,41 +96,15 @@ T_UBYTE rub_Time = 0;
  *  Return               :
  *  Critical/explanation :    [yes / No]
  **************************************************************/
-void CM_ChimeMsgDriver (T_UBYTE lub_state)
-{
-	
-	/*if(rub_PowerUpTimer > 8 && lub_state == 1)
-	{
-		rub_state = 2;
-	}
-	
-	switch(rub_state)
-	{
-		case 1:
-			if(rub_ChimeSend == 0)
-			{
-				
-				rub_ChimeSend = 1;
-			}
-			if(ChimeTimer >=  6)
-			{
-				rub_state = 2;
-			}	
-		break;
-		case 2;
-			
-		break;
-	}*/
-	
-	
-	if(rub_PowerUpTimer < 8 && lub_state != 1)
-	{
-			if(rub_ChimeSend == 0)
-			{
-				/*send chime msg*/
-				rub_ChimeSend = 1;
-			}
-	}
+ 
+/*Sound_Tone	Sound_Cadence_Period	Repetitions	Duty Cycle	SoundLocation_Driver	SoundLocation_Passenger*/
+void CM_ChimeMsgDriver(T_UBYTE lub_Tone, T_UBYTE lub_Cadence_Period, T_UBYTE lub_Repetitions, T_UBYTE lub_Duty_Cycle){
+	ChimeRequest[0] = lub_Tone;	//Sound_Tone
+	ChimeRequest[1] = lub_Cadence_Period;	//Sound_Cadence_Period
+	ChimeRequest[2] = lub_Repetitions;	//Repetitions
+	ChimeRequest[3] = lub_Duty_Cycle;	//Duty Cycle
+	ChimeRequest[4] = 0x01;	//SoundLocation_Driver
+	Can_Manager_Send_Chime_Request();
 }
 
 /**************************************************************
@@ -136,31 +114,15 @@ void CM_ChimeMsgDriver (T_UBYTE lub_state)
  *  Return               :
  *  Critical/explanation :    [yes / No]
  **************************************************************/
-void CM_ChimeMsgPass (T_UBYTE lub_state)
-{
-	if(rub_PowerUpTimer > 8 && lub_state == 1)
-	{
-		rub_state = 2;
-	}
-	
-	switch(rub_state)
-	{
-		case 1:
-			if(rub_ChimeSend == 0)
-			{
-				/*send chime msg*/
-				rub_ChimeSend = 1;
-			}
-			if(ChimeTimer >=  6)
-			{
-				rub_state = 2;
-			}	
-		break;
-		case 2;
-			/*no chime*/
-		break;
-	}
-	
+ /*Sound_Tone	Sound_Cadence_Period	Repetitions	Duty Cycle	SoundLocation_Driver	SoundLocation_Passenger*/
+
+void CM_ChimeMsgPass(T_UBYTE lub_Tone, T_UBYTE lub_Cadence_Period, T_UBYTE lub_Repetitions, T_UBYTE lub_Duty_Cycle){
+	ChimeRequest[0] = lub_Tone;	//Sound_Tone
+	ChimeRequest[1] = lub_Cadence_Period;	//Sound_Cadence_Period
+	ChimeRequest[2] = lub_Repetitions;	//Repetitions
+	ChimeRequest[3] = lub_Duty_Cycle;	//Duty Cycle
+	ChimeRequest[5] = 0x01;	//SoundLocation_Passenger
+	Can_Manager_Send_Chime_Request();
 }
 
 /**************************************************************
@@ -170,7 +132,20 @@ void CM_ChimeMsgPass (T_UBYTE lub_state)
  *  Return               :
  *  Critical/explanation :    [yes / No]
  **************************************************************/
- void CM_ChimeMsgOff (void)
- {
+ 
+void CM_ChimeMsgOff(T_UBYTE Driver_Sound_Aux, T_UBYTE Passenger_Sound_Aux){
  	/*send message for chime off*/
- }
+	if(Driver_Sound_Aux == 1){
+		ChimeRequest[4] = 0x00;	//SoundLocation_Driver
+	}
+	else{
+	
+	}
+	if(Passenger_Sound_Aux == 1){
+		ChimeRequest[5] = 0x00;	//SoundLocation_Driver
+	}
+	else{
+	
+	}
+	Can_Manager_Send_Chime_Request();
+}
