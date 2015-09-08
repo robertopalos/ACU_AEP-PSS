@@ -21,6 +21,9 @@
 /*----------------------------------------------------------------------------*/
 /*  1.0      | 31/08/15  |                               | Alexis Garcia      */
 /* Creation of the module, first version                                      */
+/*----------------------------------------------------------------------------*/
+/*  1.1      | 08/09/15  |                               | Alexis Garcia      */
+/* Added Euro Enumearation. E_PRStateListTypeEu                               */
 /*============================================================================*/
 
 #ifndef PASSRREM_H                               /* To avoid double inclusion */
@@ -29,6 +32,7 @@
 /* Includes */
 /* -------- */
 #include "typedefs.h"
+#include "DriverReminder.h"
 
 /* Exported types and constants */
 /* ---------------------------- */
@@ -41,8 +45,6 @@
 /* Declaration of exported constants                */
 /*==================================================*/ 
 /* BYTE constants */
-extern T_UBYTE rub_TimerP;
-extern T_UBYTE rub_Speed;
 
 /* WORD constants */
 
@@ -67,6 +69,13 @@ typedef enum
 	ENHANCED_2, 
 	ENHANCED_3 
 }E_PSStateListTypeEn;
+
+typedef enum
+{
+	EURO_1 = 0,
+	EURO_2, 
+	EURO_3 
+}E_PRStateListTypeEu;
 
 /*======================================================*/ 
 /* close variable declaration sections                  */

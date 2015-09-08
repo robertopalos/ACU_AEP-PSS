@@ -21,6 +21,9 @@
 /*----------------------------------------------------------------------------*/
 /*  1.0      | 31/08/15  |                               | Alexis Garcia      */
 /* Creation of the module, first version                                      */
+/*----------------------------------------------------------------------------*/
+/*  1.1      | 08/09/2015  |                               | Alexis Garcia    */
+/* Modification of functionality                             Roberto Palos    */
 /*============================================================================*/
 
 /* Includes */
@@ -55,7 +58,7 @@ T_UBYTE rub_TimerP = 0;
 
 /* LONG and STRUCTURE RAM variables */
 static E_PSStateListTypeEn rub_PSStateEn;
-static E_PSStateListTypeEn rub_PSStateEu;
+static E_PRStateListTypeEu rub_PSStateEu;
 
 /*======================================================*/ 
 /* close variable declaration sections                  */
@@ -71,51 +74,28 @@ static E_PSStateListTypeEn rub_PSStateEu;
 
 /* Exported functions prototypes */
 /* ----------------------------- */
-
-/* Inline functions */
-/* ---------------- */
-/**************************************************************
- *  Name                 : inline_func	2
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
- **************************************************************/
-
-
-/* Private functions */
-/* ----------------- */
-/**************************************************************
- *  Name                 : private_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
- **************************************************************/
-
-
 /* Exported functions */
 /* ------------------ */
 /**************************************************************
- *  Name                 :	export_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
+ *  Name                 :	PR_BasicRem
+ *  Description          :	passenger reminder basic mode of functionality
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :   
  **************************************************************/
  void PR_BasicRem (void)
  {
- 	CM_ChimeMsgPass();
-	TM_TelltaleMsgPass();
+	TM_TelltaleMsgPass(01,75,05);
+	CM_ChimeMsgPass(75,250,24,100);
  }
 
 
 /**************************************************************
- *  Name                 :	export_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
+ *  Name                 :	PR_StateMachineEn
+ *  Description          :	passenger reminder enhanced mode of functionality
+ *  Parameters           :  void	
+ *  Return               :	void
+ *  Critical/explanation :    
  **************************************************************/
 
 
@@ -154,11 +134,11 @@ void PR_StateMachineEn(void)
 
 
 /**************************************************************
- *  Name                 :	export_func
- *  Description          :
- *  Parameters           :  [Input, Output, Input / output]
- *  Return               :
- *  Critical/explanation :    [yes / No]
+ *  Name                 :	PR_StateMachineEu
+ *  Description          :	passenger reminder european mode of functionality
+ *  Parameters           :  void
+ *  Return               :	void
+ *  Critical/explanation :  
  **************************************************************/
  void PR_StateMachineEu(void)
  {
@@ -166,9 +146,9 @@ void PR_StateMachineEn(void)
 	{
 		case EURO_1:
 			TM_TelltaleMsgPassEu(0);
-			if(rub_Engine ==  ACTIVE)
+			if(rub_EngineStatus ==  1)
 			{
-				rub_DRStateEu = EURO_2;
+				rub_PSStateEu = EURO_2;
 			}
 		break;
 		
@@ -176,7 +156,7 @@ void PR_StateMachineEn(void)
 			TM_TelltaleMsgPassEu(1);
 			if(rub_Speed > 22 || rub_Distance > 250)
 			{
-				rub_DRStateEu = EURO_3;
+				rub_PSStateEu = EURO_3;
 			}
 		break;
 		
