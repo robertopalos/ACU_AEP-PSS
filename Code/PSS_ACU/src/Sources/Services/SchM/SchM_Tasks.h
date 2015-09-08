@@ -1,25 +1,92 @@
-/*******************************************************************************/
-/**
-\file       SchM_Tasks.h
-\brief      Application Tasks header file
-\author     Francisco Martinez
-\version    1.0
-\date       08/07/2015
-*/
-/*******************************************************************************/
-#ifndef __SCHM_TASKS_H
-#define __SCHM_TASKS_H
+/*============================================================================*/
+/*                        SV C BC SOFTWARE GROUP                              */
+/*============================================================================*/
+/*                        OBJECT SPECIFICATION                                */
+/*============================================================================*
+* C Include:        %SchM_Tasks.h%
+* Instance:         1
+* %version:         1 %
+* %created_by:      Alexis Antonio %
+* %date_created:    13/07/2015 %
+*=============================================================================*/
+/* DESCRIPTION : 					                                          */
+/*============================================================================*/
+/* FUNCTION COMMENT : 													      */
+/* 																			  */
+/*                                                                            */
+/*============================================================================*/
+/*                               OBJECT HISTORY                               */
+/*============================================================================*/
+/*  REVISION |   DATE      |                               |      AUTHOR      */
+/*----------------------------------------------------------------------------*/
+/*  1.0      | 13/07/2015  | 				               |Alexis Garcia     */
+/* 											                                  */
+/*----------------------------------------------------------------------------*/
+/*  REVISION |   DATE      |                               |      AUTHOR      */
+/*----------------------------------------------------------------------------*/
+/*  2.0      | 17/07/2015  | Correction of naming convention |Alexis Garcia   */
+/* 								                                              */
+/*----------------------------------------------------------------------------*/
+/*  REVISION |   DATE      |                                 |    AUTHOR      */
+/*  2.1      | 01/10/2015  |								 |Roberto Palos   */
+/*	Update function prototipes names										  */
+/*============================================================================*/
 
-extern void SchM_3p125ms_Task(void);
+#ifndef TASKS_H
+#define TASKS_H
+/* Includes */
+/* -------- */
 
-extern void SchM_6p25ms_Task(void);
 
-extern void SchM_12p5ms_Task(void);
+/* Exported types and constants */
+/* ---------------------------- */
 
-extern void SchM_25ms_Task(void);
+/* Types definition */
+/* typedef */
 
-extern void SchM_50ms_Task(void);
 
-extern void SchM_100ms_Task(void);
+/*==================================================*/ 
+/* Declaration of exported constants                */
+/*==================================================*/ 
+/* BYTE constants */
 
-#endif /* __SCHM_TASKS_H */
+
+/* WORD constants */
+
+
+/* LONG and STRUCTURE constants */
+
+
+
+/*======================================================*/ 
+/* Definition of RAM variables                          */
+/*======================================================*/ 
+/* BYTES */
+
+
+/* WORDS */
+
+
+/* LONGS and STRUCTURES */
+
+
+/*======================================================*/ 
+/* close variable declaration sections                  */
+/*======================================================*/ 
+
+/* Exported functions prototypes and macros */
+/* ---------------------------------------- */
+
+/* Functions prototypes */
+extern void Sch_Task31P25MS(void);
+extern void Sch_Task62P5MS(void);
+extern void Sch_Task125MS(void);
+extern void Sch_Task250MS(void);
+extern void Sch_Task500MS(void);
+extern void Sch_Task1S(void);
+
+/* Functions macros */
+
+
+/* Exported defines */
+#endif
